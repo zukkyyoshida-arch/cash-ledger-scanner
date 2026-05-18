@@ -175,6 +175,8 @@ def audit_cash_ledger(raw_rows):
             audited_row['corrected_expense'] = row['expense']
             audited_row['corrected_balance'] = computed_balance
             audited_row['is_correct'] = True
+            audited_row['error_type'] = None
+            audited_row['error_field'] = None
             audited_row['note'] = "基準点（前期繰越）として設定。"
         else:
             # 補正前の仮想定値
@@ -479,15 +481,15 @@ with col2:
             
             # 各セルの補正ハイライト処理
             inc_td = f"{inc_val}" if inc_val > 0 else "-"
-            if audited['error_field'] == 'income':
+            if audited.get('error_field') == 'income':
                 inc_td = f'<span class="original-value">{inc_val}</span><span class="corrected-highlight">{c_inc}</span>'
                 
             exp_td = f"{exp_val}" if exp_val > 0 else "-"
-            if audited['error_field'] == 'expense':
+            if audited.get('error_field') == 'expense':
                 exp_td = f'<span class="original-value">{exp_val}</span><span class="corrected-highlight">{c_exp}</span>'
                 
             bal_td = f"{bal_val}"
-            if audited['error_field'] == 'balance' or audited.get('carryOverError'):
+            if audited.get('error_field') == 'balance' or audited.get('carryOverError'):
                 bal_td = f'<span class="original-value">{bal_val}</span><span class="corrected-highlight">{c_bal}</span>'
                 
             st.markdown(f"""
